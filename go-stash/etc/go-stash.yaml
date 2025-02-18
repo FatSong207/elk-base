@@ -1,0 +1,36 @@
+Clusters:
+  - Input:
+      Kafka:
+        Name: gostash
+        Brokers:
+          - "kafka:9092"
+        Topics:
+          - logs
+        Group: pro
+        Consumers: 16
+    Filters:
+      - Action: remove_field
+        Fields:
+          - _source
+          - _type
+          - _score
+          - _id
+          - "@version"
+          - topic
+          - index
+          - beat
+          - docker_container
+          - offset
+          - prospector
+          - source
+          - stream
+          - "@metadata"
+      - Action: transfer
+        Field: message
+        Target: data
+    Output:
+      ElasticSearch:
+        Hosts:
+          - "http://elasticsearch:9200"
+        Index: "my-logs-{{yyyy.MM.dd}}"
+        IndexType: ""
