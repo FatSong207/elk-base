@@ -1,5 +1,8 @@
 version: '3'
 
+volumes:
+  app_logs:
+
 services:
   zookeeper:
     image: wurstmeister/zookeeper
@@ -17,15 +20,27 @@ services:
     depends_on:
       - zookeeper
 
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    ports:
+      - "8080:8080"
+    environment:
+      - KAFKA_CLUSTERS_0_NAME=local
+      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:9092
+      - KAFKA_CLUSTERS_0_ZOOKEEPER=zookeeper:2181
+    depends_on:
+      - kafka
+      - zookeeper
+
   filebeat:
     image: docker.elastic.co/beats/filebeat:8.12.1
     volumes:
+      - app_logs:/logs:ro
       - ./filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
-      - ./logs:/logs:ro
     depends_on:
       - kafka
 
   app:
     build: .
     volumes:
-      - ./logs:/app/logs
+      - app_logs:/app/logs
