@@ -1,0 +1,31 @@
+version: '3'
+
+services:
+  zookeeper:
+    image: wurstmeister/zookeeper
+    ports:
+      - "2181:2181"
+
+  kafka:
+    image: wurstmeister/kafka
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_ADVERTISED_HOST_NAME: kafka
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_CREATE_TOPICS: "logs:1:1"
+    depends_on:
+      - zookeeper
+
+  filebeat:
+    image: docker.elastic.co/beats/filebeat:8.12.1
+    volumes:
+      - ./filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
+      - ./logs:/logs:ro
+    depends_on:
+      - kafka
+
+  app:
+    build: .
+    volumes:
+      - ./logs:/app/logs

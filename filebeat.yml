@@ -1,0 +1,15 @@
+filebeat.inputs:
+- type: log
+  enabled: true
+  paths:
+    - /logs/app.log
+  fields:
+    log_type: application_logs
+
+output.kafka:
+  hosts: ["kafka:9092"]
+  topic: "logs"
+  compression: gzip
+  max_message_bytes: 1000000
+
+logging.level: info 
