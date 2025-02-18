@@ -6,6 +6,10 @@ filebeat.inputs:
   fields:
     log_type: application_logs
 
+# processors:
+#   - add_cloud_metadata: ~      # 添加雲平台相關的元數據
+#   - add_docker_metadata: ~     # 添加 Docker 容器相關的元數據
+
 output.kafka:
   hosts: ["kafka:9092"]
   topic: "logs"
