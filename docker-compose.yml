@@ -99,7 +99,6 @@ services:
   es-init:
     image: curlimages/curl
     volumes:
-      - ./es-template.sh:/es-template.sh
       - ./es-init.sh:/es-init.sh
     command: ["sh", "/es-init.sh"]
     depends_on:
